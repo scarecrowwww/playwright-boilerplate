@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import { promises as fs } from 'fs'
 import Crawler from '../src/Crawler.js'
 
-const TEST_URL = 'https://scarecrowwww.github.io/playwright-boilerplate/'
+const TEST_URL = 'https://scrcr.github.io/playwright-boilerplate/'
 const IMAGE_URL = `${TEST_URL}images/image.jpg`
 
 test.describe('Crawler class', () => {
