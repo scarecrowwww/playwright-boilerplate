@@ -1,5 +1,6 @@
-import { writeFile } from 'fs/promises'
 import { firefox } from 'playwright'
+import { promises as fs } from 'fs'
+import path from 'path'
 
 const TIMEOUT = 60000
 const BASE_URL = 'https://dev.to'
@@ -11,10 +12,10 @@ const playwrightOptions = {
 }
 
 class Crawler {
-  constructor() {
+  constructor(baseUrl = BASE_URL) {
     this.browser = null
     this.page = null
-    this.init()
+    this.baseUrl = baseUrl
   }
 
   async init() {
@@ -22,10 +23,6 @@ class Crawler {
       await this.initializeBrowser()
     } catch (error) {
       log(`Error in init: ${error}`)
-    } finally {
-      if (this.browser) {
-        await this.browser.close()
-      }
     }
   }
 
@@ -46,15 +43,22 @@ class Crawler {
     }
   }
 
-  async fetchImage(imageUrl, fileName) {
+  async downloadImage(imageUrl, fileName) {
+    const dirPath = './download_images'
+    const filePath = path.join(dirPath, `${fileName}.jpg`)
+
     try {
-      const response = await fetch(`${imageUrl}`)
+      const response = await fetch(imageUrl)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
       const buffer = await response.arrayBuffer()
-      const filePath = `./tmp/${fileName}.jpg`
-      await writeFile(filePath, Buffer.from(buffer), 'binary')
+
+      await fs.mkdir(dirPath, { recursive: true })
+      await fs.writeFile(filePath, Buffer.from(buffer), 'binary')
       return filePath
     } catch (error) {
-      log(`Error fetching image: ${error}`)
+      log(`Error fetching image from ${imageUrl}: ${error.message}`)
       return null
     }
   }
@@ -86,20 +90,21 @@ class Crawler {
     }
   }
 
-  async getItems() {
+  async getItems(elementIdentifier) {
     try {
-      await this.movePage(BASE_URL)
-      const newsItems = await this.page.$$('.crayons-story__title')
-      log(`Found ${newsItems.length} news items`)
+      const foundItems = await this.page.$$(elementIdentifier)
+      log(`Found ${foundItems.length} items`)
 
-      for (const newsItem of newsItems) {
-        const titleElement = await newsItem.$('a')
-        if (titleElement) {
-          const title = await this.getTextContent(titleElement)
-          const href = await this.getHref(newsItem)
-          log(`Title: ${title}, Link: ${BASE_URL}/${href}`)
-        }
+      const gotItems = []
+
+      for (const item of foundItems) {
+        const title = await this.getTextContent(item)
+        const href = await this.getHref(item)
+        gotItems.push({title,href})
       }
+
+      log(gotItems)
+      return gotItems
     } catch (error) {
       log(`Error getting items: ${error}`)
     }
