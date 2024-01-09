@@ -8,7 +8,7 @@ const log = value => console.log(value)
 
 const playwrightOptions = {
   args: ['--lang=ja,en-US,en', '--no-sandbox', '--disable-setuid-sandbox'],
-  headless: false,
+  headless: true,
 }
 
 class Crawler {
