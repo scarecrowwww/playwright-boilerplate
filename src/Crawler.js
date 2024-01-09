@@ -34,7 +34,7 @@ class Crawler {
     log('Browser initialized')
   }
 
-  async movePage(url) {
+  async movePage(url = this.baseUrl) {
     try {
       await this.page.goto(url, { waitUntil: 'networkidle' })
       log(`Navigated to ${url}`)

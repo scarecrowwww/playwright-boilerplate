@@ -1,9 +1,8 @@
 import Crawler from './src/Crawler.js'
 
-const crawler = new Crawler();
 (async () => {
+	const crawler = new Crawler();
 	await crawler.init()
 	await crawler.movePage()
-	await crawler.fetchImage('https://scarecrowwww.github.io/playwright-boilerplate/images/image.jpg', 'test')
-	await crawler.getItems()
+	await crawler.getItems('.crayons-story__title > a')
 })()
