@@ -1,0 +1,23 @@
+{
+  "name": "playwright-boilerplate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "start": "node run.js"
+  },
+  "keywords": [],
+  "author": "scarecrow",
+  "license": "ISC",
+  "dependencies": {
+    "playwright": "^1.40.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.1",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-playwright-preset": "^4.0.0"
+  }
+}
